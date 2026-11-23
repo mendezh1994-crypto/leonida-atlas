@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#111318">
+<title>Leonida · Atlas GTA VI en español</title>
+<style>
+:root{--bg:#101319;--panel:#191e27;--panel2:#202733;--line:#303947;--text:#f3f5f7;--muted:#a5afbd;--gold:#eab34d;--cyan:#68c9bf}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}body{display:flex;flex-direction:column;overflow:hidden}
+header{height:58px;flex:none;display:flex;align-items:center;gap:11px;padding:0 14px;border-bottom:1px solid var(--line);background:#12161d;z-index:4}
+.logo{width:35px;height:35px;border-radius:10px;background:linear-gradient(145deg,#f1c45d,#d77c36);color:#171717;font-weight:1000;display:grid;place-items:center}
+.brand{flex:1;min-width:0}.brand b{display:block;letter-spacing:.08em;font-size:13px}.brand small{color:var(--muted);font-size:11px}
+button,input,select{font:inherit}button{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:9px;padding:8px 10px;cursor:pointer}button:hover{border-color:#718096}button.primary{background:var(--gold);border-color:var(--gold);color:#171717;font-weight:800}
+.layout{display:flex;flex:1;min-height:0}
+aside{width:330px;flex:none;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;z-index:2}
+.search{padding:12px;border-bottom:1px solid var(--line)}input[type=search],input[type=text]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#11161e;color:var(--text);outline:none}input:focus{border-color:var(--gold)}
+.stats{display:flex;gap:8px;margin-top:9px}.stat{flex:1;background:#11161e;border:1px solid var(--line);border-radius:9px;padding:8px}.stat strong{display:block;font-size:17px}.stat span{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.tools{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}.tools button{font-size:11px;padding:7px 8px}
+.scroll{overflow:auto;padding:10px 12px 18px}.section-title{display:flex;justify-content:space-between;align-items:center;color:#e5e9ef;font-weight:800;font-size:12px;letter-spacing:.07em;text-transform:uppercase;margin:8px 0}.muted{color:var(--muted)}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:6px}.filter{display:flex;align-items:center;gap:7px;background:#121720;border:1px solid var(--line);padding:8px;border-radius:8px;font-size:12px;min-width:0}.filter input{accent-color:var(--gold)}.filter span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.result-list{display:flex;flex-direction:column;gap:5px;margin-top:8px}.result{display:flex;gap:9px;align-items:flex-start;text-align:left;width:100%;padding:9px;background:#121720}.result .dot{width:9px;height:9px;border-radius:50%;margin-top:4px;flex:none;background:var(--cyan)}.result b{display:block;font-size:12px;line-height:1.3}.result small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+main{position:relative;flex:1;min-width:0;background:#121a20;overflow:hidden}
+#map{width:100%;height:100%;display:block;touch-action:none;background:#142128;cursor:grab}#map.dragging{cursor:grabbing}
+#base{pointer-events:none}#markers{pointer-events:none}.pin{pointer-events:all;cursor:pointer;stroke:#111820;stroke-width:3;opacity:.9}.pin.done{stroke:#eac35b;stroke-width:5}.pin.selected{stroke:#fff;stroke-width:7}
+.map-controls{position:absolute;right:13px;top:13px;display:flex;flex-direction:column;gap:6px}.map-controls button{width:40px;height:39px;font-size:20px;padding:0;background:#151b24ed}
+.map-note{position:absolute;bottom:10px;left:12px;background:#111820dd;border:1px solid var(--line);padding:7px 9px;border-radius:8px;color:var(--muted);font-size:10px}
+.detail{position:absolute;right:12px;bottom:12px;width:min(350px,calc(100% - 24px));max-height:48%;overflow:auto;background:#171d26f5;border:1px solid #485363;border-radius:13px;padding:13px;box-shadow:0 10px 30px #0008;display:none}
+.detail h3{margin:0 0 6px;font-size:16px}.detail p{color:var(--muted);font-size:12px;line-height:1.45}.detail .actions{display:flex;gap:6px;flex-wrap:wrap}.detail button{font-size:11px}
+#loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#111820eF;z-index:3;text-align:center;padding:20px}
+.loadbox{max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}.loadbox h2{margin:0 0 8px}.loadbox p{color:var(--muted);line-height:1.5;font-size:13px}
+footer{height:25px;flex:none;background:#11151c;border-top:1px solid var(--line);color:#8994a3;font-size:9px;display:flex;align-items:center;justify-content:center;padding:0 8px;text-align:center}
+#mobileFilters{display:none}
+@media(max-width:760px){
+ header{height:54px;padding:0 9px}.brand b{font-size:11px}.brand small{font-size:9px}
+ aside{position:absolute;left:0;top:54px;bottom:25px;width:min(88vw,340px);transform:translateX(-105%);transition:transform .2s;box-shadow:12px 0 30px #0008}aside.open{transform:translateX(0)}
+ #mobileFilters{display:block}main{width:100%}.detail{bottom:10px;max-height:40%}
+}
+</style></head>
+<body>
+<header><div class="logo">VI</div><div class="brand"><b>LEONIDA · ATLAS EN ESPAÑOL</b><small>Mapa comunitario interactivo de GTA VI</small></div><button id="mobileFilters">☰ Filtros</button><button id="reset" title="Ver mapa completo">⌖</button></header>
+<div class="layout">
+<aside id="side">
+ <div class="search">
+  <input id="q" type="search" placeholder="Buscar lugares, barrios, etiquetas…">
+  <div class="stats"><div class="stat"><strong id="total">—</strong><span>lugares cargados</span></div><div class="stat"><strong id="visible">—</strong><span>en el mapa</span></div><div class="stat"><strong id="progress">0%</strong><span>completado</span></div></div>
+  <div class="tools"><button id="onlyFav">★ Favoritos</button><button id="onlyDone">✓ Encontrados</button><button id="export">⇩ Exportar progreso</button><button id="addPin">＋ Mi marcador</button></div>
+ </div>
+ <div class="scroll">
+  <div class="section-title">Categorías <button id="allCats">Todas</button></div>
+  <div class="filters" id="filters"></div>
+  <div class="section-title" style="margin-top:16px">Resultados <span id="resultCount" class="muted"></span></div>
+  <div class="result-list" id="results"></div>
+  <p class="muted" style="font-size:10px;line-height:1.45">Las posiciones son reconstrucciones comunitarias aproximadas, no coordenadas oficiales del juego. Los registros sin coordenadas permanecen en el buscador, pero no aparecen en el mapa.</p>
+ </div>
+</aside>
+<main>
+ <svg id="map" viewBox="-32000 -24000 40000 40000" role="img" aria-label="Mapa interactivo de Leonida">
+  <defs><pattern id="grid" width="500" height="500" patternUnits="userSpaceOnUse"><path d="M 500 0 L 0 0 0 500" fill="none" stroke="#29404a" stroke-width="8" opacity=".35"/></pattern></defs>
+  <rect x="-32000" y="-24000" width="40000" height="40000" fill="#17252b"/><rect x="-32000" y="-24000" width="40000" height="40000" fill="url(#grid)"/>
+  <image id="base" x="-32000" y="-24000" width="40000" height="40000" preserveAspectRatio="none"/>
+  <g id="markers"></g>
+ </svg>
+ <div class="map-controls"><button id="zin">＋</button><button id="zout">−</button><button id="home">⌖</button></div>
+ <div class="map-note" id="mapStatus">Cargando catálogo comunitario…</div>
+ <div class="detail" id="detail"></div>
+ <div id="loading"><div class="loadbox"><h2>Preparando Leonida…</h2><p id="loadText">Descargando el catálogo comunitario y el mapa base. Puede tardar unos segundos.</p></div></div>
+</main></div>
+<footer>Datos GTADB / Map GTA · CC BY 4.0 · mapa base comunitario YANIS · Proyecto fan no oficial, sin afiliación con Rockstar Games</footer>
+<script>
+(()=>{
+const DATA='https://raw.githubusercontent.com/navanem/gta6-leonida-atlas/main/public/assets/street-leonida/maps/gtadb-landmarks-5c1d69f.json';
+const BASE='https://raw.githubusercontent.com/navanem/gta6-leonida-atlas/main/public/assets/gta6-leonida-atlas/basemap.svg';
+const map=document.getElementById('map'), svgNS='http://www.w3.org/2000/svg', markerLayer=document.getElementById('markers');
+const $=id=>document.getElementById(id);
+let records=[], filtered=[], selected=null, showFav=false, showDone=false, active=new Set(), fav=new Set(), done=new Set(), custom=[];
+let view={x:-32000,y:-24000,w:40000,h:40000}, drag=null, categories={};
+const translations={
+ hotel:'Hoteles',residential:'Residencial',enterable:'Edificios accesibles',transportation:'Transporte',infrastructure:'Infraestructura',infr:'Infraestructura',natural:'Naturaleza',agriculture:'Agricultura',restaurant:'Restaurantes',retail:'Comercios',service:'Servicios',office:'Oficinas',industrial:'Industria',construction:'Construcción',safehouse:'Refugios',l1:'Edificios de nivel 1',unconfirmed:'Sin confirmar',demolished:'Demolidos',landmark:'Lugares emblemáticos',bridge:'Puentes',road:'Carreteras',park:'Parques',water:'Agua',beach:'Playas',airport:'Aeropuertos',hospital:'Hospitales',school:'Escuelas',police:'Policía',fire:'Bomberos',gas:'Gasolineras',shop:'Tiendas',bar:'Bares',bank:'Bancos',garage:'Garajes',parking:'Aparcamientos',pier:'Muelles',marina:'Marinas',stadium:'Estadios',sports:'Deportes',museum:'Museos',church:'Iglesias',cemetery:'Cementerios',farm:'Granjas',factory:'Fábricas',warehouse:'Almacenes',military:'Militar',government:'Gobierno',hotel_motel:'Hoteles y moteles'
+};
+const translate=t=>translations[t]||t.replace(/[_-]/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
+const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pos=r=>r.inGameCoordinates&&r.inGameCoordinates.length===2&&r.inGameCoordinates.every(Number.isFinite)?{x:r.inGameCoordinates[0]*2,y:-r.inGameCoordinates[1]*2}:null;
+const label=r=>(r.inGameAddress||'Ubicación sin nombre').replace(/^\?,?\s*/,'').trim()||'Ubicación sin nombre';
+const color=t=>({hotel:'#e9b84f',residential:'#72b9d4',transportation:'#e18c56',infrastructure:'#a58bd7',natural:'#76c98e',agriculture:'#92b95b',restaurant:'#ef927c',retail:'#e4c66e',service:'#75c7bc',office:'#9eacd8',industrial:'#b18a72',construction:'#dc9c57'}[t]||'#76c8c0');
+function catOf(r){let tags=r.tags||[];if(tags.some(t=>['natural','agriculture'].includes(t)))return 'nature';if(tags.some(t=>['transportation','infrastructure','infr'].includes(t)))return 'transport';if(tags.some(t=>['hotel','restaurant','retail','service','office','industrial'].includes(t)))return 'business';return 'landmark'}
+const catNames={landmark:'Lugares y edificios',nature:'Naturaleza y campo',transport:'Transporte e infraestructuras',business:'Negocios y servicios',custom:'Mis marcadores'};
+function save(){try{localStorage.setItem('leonida-es-state',JSON.stringify({fav:[...fav],done:[...done],custom}))}catch(e){}}
+function loadSaved(){try{let s=JSON.parse(localStorage.getItem('leonida-es-state')||'{}');fav=new Set(s.fav||[]);done=new Set(s.done||[]);custom=s.custom||[]}catch(e){}}
+function setView(v){view=v;map.setAttribute('viewBox',`${v.x} ${v.y} ${v.w} ${v.h}`);renderPins()}
+function fit(){setView({x:-32000,y:-24000,w:40000,h:40000})}
+function zoom(f){let w=view.w*f,h=view.h*f;setView({x:view.x+(view.w-w)/2,y:view.y+(view.h-h)/2,w,h})}
+function screenPoint(p){return p}
+function renderPins(){
+ markerLayer.replaceChildren();let q=$('q').value.toLowerCase().trim();let count=0;
+ for(let r of filtered){let p=pos(r);if(!p)continue;let cx=p.x,cy=p.y;if(cx<view.x-100||cx>view.x+view.w+100||cy<view.y-100||cy>view.y+view.h+100)continue;
+ let c=document.createElementNS(svgNS,'circle');c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',Math.max(20,view.w/850));c.setAttribute('fill',color((r.tags||[])[0]));c.setAttribute('class','pin'+(done.has(r.id)?' done':'')+(selected===r.id?' selected':''));c.dataset.id=r.id;c.addEventListener('click',e=>{e.stopPropagation();select(r.id)});markerLayer.append(c);count++;
+ }
+ for(let r of custom){let c=document.createElementNS(svgNS,'circle');c.setAttribute('cx',r.x);c.setAttribute('cy',r.y);c.setAttribute('r',Math.max(26,view.w/700));c.setAttribute('fill','#f2bd4f');c.setAttribute('class','pin');c.addEventListener('click',e=>{e.stopPropagation();showCustom(r)});markerLayer.append(c);count++}
+ $('visible').textContent=count.toLocaleString('es-ES');$('mapStatus').textContent=`${count.toLocaleString('es-ES')} marcadores visibles · arrastra para moverte · pellizca o usa +/−`;
+}
+function select(id){selected=id;let r=records.find(x=>x.id===id);if(!r)return;let p=pos(r);if(p){let w=Math.min(view.w,9000),h=w*map.clientHeight/map.clientWidth;setView({x:p.x-w/2,y:p.y-h/2,w,h})}
+let d=$('detail');d.style.display='block';d.innerHTML=`<button id="closeDetail" style="float:right">✕</button><h3>${escape(label(r))}</h3><p>${escape((r.inGameAddress||'').replace(/^\?,?\s*/,''))}</p><p><b>Categoría:</b> ${escape((r.tags||[]).map(translate).join(', ')||'Lugar')}</p><p><b>Identificador:</b> ${escape(r.id)} · <b>Precisión:</b> aproximada</p><div class="actions"><button id="markDone">${done.has(id)?'✓ Encontrado':'Marcar encontrado'}</button><button id="markFav">${fav.has(id)?'★ En favoritos':'☆ Favorito'}</button><button id="copyName">Copiar nombre</button></div>`;
+ $('closeDetail').onclick=()=>d.style.display='none';$('markDone').onclick=()=>{done.has(id)?done.delete(id):done.add(id);save();stats();select(id);renderPins()};$('markFav').onclick=()=>{fav.has(id)?fav.delete(id):fav.add(id);save();stats();select(id)};$('copyName').onclick=()=>navigator.clipboard?.writeText(label(r));
+ renderPins();
+}
+function showCustom(r){let d=$('detail');d.style.display='block';d.innerHTML=`<button id="closeDetail" style="float:right">✕</button><h3>${escape(r.name)}</h3><p>Marcador personal</p><button id="deleteCustom">Eliminar marcador</button>`;$('closeDetail').onclick=()=>d.style.display='none';$('deleteCustom').onclick=()=>{custom=custom.filter(x=>x.id!==r.id);save();renderPins();d.style.display='none'}}
+function stats(){$('total').textContent=records.length.toLocaleString('es-ES');let n=records.filter(r=>done.has(r.id)).length;$('progress').textContent=(records.length?Math.round(n/records.length*100):0)+'%'}
+function buildFilters(){
+ let cats=['landmark','nature','transport','business'];active=new Set(cats);$('filters').innerHTML=cats.map(c=>`<label class="filter"><input type="checkbox" data-cat="${c}" checked><span>${catNames[c]}</span></label>`).join('');
+ $('filters').querySelectorAll('input').forEach(i=>i.addEventListener('change',()=>{i.checked?active.add(i.dataset.cat):active.delete(i.dataset.cat);apply()}));
+}
+function apply(){
+ let q=$('q').value.toLowerCase().trim();
+ filtered=records.filter(r=>{let text=[r.id,r.inGameAddress,r.realWorldAddress,...(r.tags||[])].join(' ').toLowerCase();return (!q||text.includes(q))&&active.has(catOf(r))&&(!showFav||fav.has(r.id))&&(!showDone||done.has(r.id))});
+ let shown=filtered.slice(0,120);$('resultCount').textContent=filtered.length.toLocaleString('es-ES');$('results').innerHTML=shown.map(r=>`<button class="result" data-id="${r.id}"><i class="dot" style="background:${color((r.tags||[])[0])}"></i><span><b>${escape(label(r))}</b><small>${escape((r.tags||[]).map(translate).join(' · ')||'Lugar')} · ${r.id}${pos(r)?'':' · sin coordenadas'}</small></span></button>`).join('')+(filtered.length>120?`<p class="muted" style="font-size:10px">Mostrando 120 de ${filtered.length}. Afina la búsqueda para encontrar otros.</p>`:'');
+ $('results').querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>select(b.dataset.id));renderPins();
+}
+function exportProgress(){let blob=new Blob([JSON.stringify({version:1,favorites:[...fav],found:[...done],custom},null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='mi-progreso-leonida.json';a.click();URL.revokeObjectURL(a.href)}
+function addCustom(){let name=prompt('Nombre del marcador:');if(!name)return;let x=view.x+view.w/2,y=view.y+view.h/2;custom.push({id:'custom-'+Date.now(),name,x,y});save();renderPins()}
+async function start(){
+ loadSaved();$('base').setAttribute('href',BASE);
+ try{
+ $('loadText').textContent='Descargando 3.431 ubicaciones comunitarias…';
+ let response=await fetch(DATA);if(!response.ok)throw new Error('No se pudo descargar el catálogo ('+response.status+').');let data=await response.json();records=data.landmarks||[];
+ $('total').textContent=records.length.toLocaleString('es-ES');buildFilters();stats();apply();$('loading').style.display='none';
+ }catch(err){$('loadText').textContent='No se pudo cargar el catálogo. Comprueba tu conexión y vuelve a abrir el archivo. Detalle: '+err.message}
+}
+$('q').addEventListener('input',apply);$('onlyFav').onclick=()=>{showFav=!showFav;$('onlyFav').style.borderColor=showFav?'var(--gold)':'';apply()};$('onlyDone').onclick=()=>{showDone=!showDone;$('onlyDone').style.borderColor=showDone?'var(--gold)':'';apply()};$('export').onclick=exportProgress;$('addPin').onclick=addCustom;$('allCats').onclick=()=>{$('filters').querySelectorAll('input').forEach(i=>i.checked=true);active=new Set(['landmark','nature','transport','business']);apply()};
+$('zin').onclick=()=>zoom(.7);$('zout').onclick=()=>zoom(1.4);$('home').onclick=fit;$('reset').onclick=fit;$('mobileFilters').onclick=()=>$('side').classList.toggle('open');
+map.addEventListener('pointerdown',e=>{if(e.target.closest('.pin'))return;drag={x:e.clientX,y:e.clientY,v:{...view}};map.setPointerCapture(e.pointerId);map.classList.add('dragging')});
+map.addEventListener('pointermove',e=>{if(!drag)return;let r=map.getBoundingClientRect(),dx=(e.clientX-drag.x)*drag.v.w/r.width,dy=(e.clientY-drag.y)*drag.v.h/r.height;view={...drag.v,x:drag.v.x-dx,y:drag.v.y-dy};map.setAttribute('viewBox',`${view.x} ${view.y} ${view.w} ${view.h}`)});
+map.addEventListener('pointerup',()=>{drag=null;map.classList.remove('dragging')});map.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?.85:1.18)},{passive:false});
+start();
+})();
+</script></body></html>
